@@ -1,4 +1,4 @@
-<sub>OBS: Não entendi muito bem se o(s) README(s) deveria(am) estar em inglês. Por isso, deixei toda essa parte em português mesmo.</sub>
+<sub>OBS: Não entendi muito bem se o(s) README(s) também deveria(am) estar em inglês. Por isso, deixei toda essa parte em português mesmo.</sub>
 
 #### Pressupostos
 
