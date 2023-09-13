@@ -6,15 +6,15 @@ Uma única coisa não soou clara para mim: como o 'node' de END, pelo `config_fr
 
 Assumi que toda a ordem de verificação também deveria ser invertida.
 
-Tomei esse caminho, pois acredito não fazer sentido uma _Policy_ que sempre retorna `false`. Assim, quando o output dado pelo 'node' de saída for o de retornar `false`, quaisquer 'nodes' de decisão cujas verificações retornem `true`, farão com que o execute interrompa a sua execução, retornando `true`.
+Tomei esse caminho, pois acredito não fazer sentido uma _Policy_ que sempre retorna `false`. Assim, quando o output dado pelo 'node' de saída for o de retornar `false`, quaisquer 'nodes' de decisão cujas verificações retornem `true` farão com que o execute interrompa a sua execução, retornando `true`.
 
 #### Instruções
 
-Para rodar o projeto de forma mais rápida, siga os passos abaixo:
+Para rodar o projeto de forma rápida, siga os passos abaixo:
 
-1. Certifique-se de ter o Python instalado globalmente no seu computador;
-2. Execute em uma linha de comando `git clone git@github.com:antoniopataro/execution-engine.git` seguido de `cd execution-engine`;
-3. Instancie três terminais. Certifique-se de que eles estão no path do projeto. Rode:
+1. Certifique-se de ter o [Node](https://nodejs.org/en) (v16.20.0) e o [Python](https://www.python.org/downloads/) (v3.10.12) instalados globalmente no seu computador;
+2. Execute, em uma linha de comando, `git clone git@github.com:antoniopataro/execution-engine.git` seguido de `cd execution-engine`;
+3. Abra três terminais. Certifique-se de que eles estão no path do projeto. Rode:
    1. `sh t_config_backend.sh` no primeiro terminal (config_backend);
    1. `sh t_config_frontend.sh` no segundo terminal (config_frontend);
    1. `sh t_execution_engine.sh` no terceiro terminal (execution_engine);
@@ -22,7 +22,7 @@ Para rodar o projeto de forma mais rápida, siga os passos abaixo:
 <details>
   <summary>Algo deu errado? Tente a instalação manual.</summary>
 
-1.  Certifique-se de ter o Python instalado globalmente no seu computador. Dependendo da sua instalação, pode haver o path `python3` ao invés de `python`. Caso seja o caso, troque, em todas as ocorrências das instruções abaixo, `python` por `python3`;
+1. Certifique-se de ter o [Node](https://nodejs.org/en) (v16.20.0) e o [Python](https://www.python.org/downloads/) (v3.10.12) instalados globalmente no seu computador. Dependendo da sua instalação, pode haver o path `python3` ao invés de `python`. Caso seja o caso, troque, em todas as ocorrências das instruções abaixo, `python` por `python3`;
 2.  Execute em uma linha de comando `git clone git@github.com:antoniopataro/execution-engine.git` seguido de `cd execution-engine`;
 3.  Execute três instâncias de terminais, um para cada peça chave do projeto;
 4.  No primeiro, execute `cd config_backend` para acessar o conteúdo do ConfigBackend e rode:
