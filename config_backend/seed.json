@@ -1,0 +1,12 @@
+{
+  "policies": [
+    {
+      "id": "default",
+      "decisions": [
+        { "criteria": ">", "value": "18", "variable": "age" },
+        { "criteria": ">", "value": "1000", "variable": "income" }
+      ],
+      "output": true
+    }
+  ]
+}
