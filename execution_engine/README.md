@@ -4,4 +4,4 @@ Utilizei, também, Python, com configurações similares ao `config_backend`.
 
 Endpoints:
 
-- POST: `/api/execute` <sub>Executa a policy diante dos dados passados pelo body, retornando um { "decision": boolean }.</sub>
+- POST: `/api/execute/<id>` <sub>Executa uma policy com base em um 'id' diante dos dados passados pelo body, retornando um { "decision": boolean }.</sub>
