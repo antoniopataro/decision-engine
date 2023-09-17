@@ -1,6 +1,5 @@
 import json
 from django.core.management.base import BaseCommand
-from domain.decisions.models import Decision
 from domain.policies.models import Policy
 
 
@@ -14,11 +13,6 @@ class Command(BaseCommand):
         policies = seed.get("policies", [])
 
         for policy in policies:
-            decisions = policy.pop("decisions", [])
-
             policy = Policy.objects.create(**policy)
-
-            for decision in decisions:
-                Decision.objects.create(policy=policy, **decision)
 
         self.stdout.write(self.style.SUCCESS("successfully seeded the database"))

@@ -8,7 +8,7 @@ from rest_framework import status
 from django.core.exceptions import ValidationError
 
 
-def decode_request_body(body: any):
+def decode_request_body(body: bytes) -> tuple[dict, None] | tuple[None, Response]:
     try:
         return json.loads(body), None
     except json.JSONDecodeError as e:
@@ -33,6 +33,7 @@ def read(_: Request, id: str):
         return error
 
     serializer = PolicySerializer(policy)
+    
     return Response(serializer.data)
 
 
@@ -53,6 +54,24 @@ def update(req: Request, id: str):
     try:
         serializer.is_valid()
         serializer.save()
-        return Response(serializer.data)
+    except KeyError as e:
+        return Response(
+            {"error": f"missing {e}"},
+            status=status.HTTP_400_BAD_REQUEST,
+        )
+    except TypeError as e:
+        return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
     except ValidationError as e:
         return Response({"error": e.detail}, status=status.HTTP_400_BAD_REQUEST)
+    except ValueError as e:
+        return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
+
+    unrecognized_fields = set(data.keys()) - set(serializer.validated_data.keys())
+
+    if unrecognized_fields:
+        return Response(
+            {"error": f"unrecognized fields {unrecognized_fields}"},
+            status=status.HTTP_400_BAD_REQUEST,
+        )
+
+    return Response(serializer.data)

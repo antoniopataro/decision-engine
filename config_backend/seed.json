@@ -2,11 +2,64 @@
   "policies": [
     {
       "id": "default",
-      "decisions": [
-        { "criteria": ">", "value": "18", "variable": "age" },
-        { "criteria": ">", "value": "1000", "variable": "income" }
-      ],
-      "output": true
+      "nodes": [
+        {
+          "condition": {
+            "criteria": "<",
+            "value": 18,
+            "variable": "age"
+          },
+          "otherwise": [
+            {
+              "condition": {
+                "criteria": "<",
+                "value": 1000,
+                "variable": "income"
+              },
+              "otherwise": [
+                {
+                  "output": true,
+                  "type": "output"
+                }
+              ],
+              "then": [
+                {
+                  "condition": {
+                    "criteria": ">",
+                    "value": 25,
+                    "variable": "age"
+                  },
+                  "otherwise": [
+                    {
+                      "output": false,
+                      "type": "output"
+                    }
+                  ],
+                  "then": [
+                    {
+                      "output": true,
+                      "type": "output"
+                    }
+                  ],
+                  "type": "condition"
+                }
+              ],
+              "type": "condition"
+            }
+          ],
+          "then": [
+            {
+              "output": false,
+              "type": "output"
+            }
+          ],
+          "type": "condition"
+        },
+        {
+          "output": false,
+          "type": "output"
+        }
+      ]
     }
   ]
 }
