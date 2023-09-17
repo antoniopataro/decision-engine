@@ -1,35 +1,47 @@
-import { useNodes } from "@/contexts/nodes-context";
-
 import { AvailableNodes } from "@/pages/home/pieces/available-nodes";
 
 import { render } from "@testing-library/react";
-
-jest.mock("@/contexts/nodes-context", () => ({
-  useNodes: jest.fn(() => ({
-    nodes: [
-      {
-        type: "END",
-      },
-      {
-        type: "DECISION",
-      },
-      {
-        type: "START",
-      },
-    ],
-  })),
-}));
-
-const useNodesMock = useNodes as jest.Mock<
-  Partial<ReturnType<typeof useNodes>>
->;
+import { useNodesLogic } from "../../logics/use-nodes-logic";
 
 jest.mock("@/components/icon", () => ({
   Icon: jest.fn(() => <div />),
 }));
 
-jest.mock("@/components/draggable", () => ({
-  Draggable: jest.fn(({ children }) => <div>{children}</div>),
+jest.mock("@/pages/home/logics/use-nodes-logic", () => ({
+  useNodesLogic: jest.fn(() => ({
+    lastNode: undefined,
+    startNode: undefined,
+  })),
+}));
+
+const useNodesLogicMock = useNodesLogic as jest.Mock<
+  Partial<ReturnType<typeof useNodesLogic>>
+>;
+
+jest.mock("react-beautiful-dnd", () => ({
+  ...jest.requireActual("react-beautiful-dnd"),
+  Droppable: jest.fn(({ children }) =>
+    children(
+      {
+        draggableProps: {
+          style: {},
+        },
+        innerRef: jest.fn(),
+      },
+      {},
+    ),
+  ),
+  Draggable: jest.fn(({ children }) =>
+    children(
+      {
+        draggableProps: {
+          style: {},
+        },
+        innerRef: jest.fn(),
+      },
+      {},
+    ),
+  ),
 }));
 
 const makeSut = () => {
@@ -38,7 +50,7 @@ const makeSut = () => {
 
 describe("AvailableNodes", () => {
   afterEach(() => {
-    useNodesMock.mockClear();
+    useNodesLogicMock.mockClear();
   });
 
   it("should render", () => {
@@ -47,26 +59,29 @@ describe("AvailableNodes", () => {
     expect(container.firstChild).toBeDefined();
   });
 
-  it("should render availableNodes when node of type END is not present", () => {
-    useNodesMock.mockReturnValueOnce({
-      nodes: [
-        {
-          type: "DECISION",
-        },
-        {
-          type: "START",
-        },
-      ],
+  it("should render with defined lastNode", () => {
+    useNodesLogicMock.mockReturnValueOnce({
+      lastNode: {
+        type: "output",
+      },
+      startNode: undefined,
     } as any);
 
-    makeSut();
+    const { container } = makeSut();
+
+    expect(container.firstChild).toBeDefined();
   });
 
-  it("should not render availableNodes when node of type START is not present", () => {
-    useNodesMock.mockReturnValueOnce({
-      nodes: [],
+  it("should render with defined startNode", () => {
+    useNodesLogicMock.mockReturnValueOnce({
+      lastNode: undefined,
+      startNode: {
+        type: "start",
+      },
     } as any);
 
-    makeSut();
+    const { container } = makeSut();
+
+    expect(container.firstChild).toBeDefined();
   });
 });

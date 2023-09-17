@@ -1,5 +1,3 @@
-import React from "react";
-
 import { Button } from "@/components/button";
 
 import { usePolicy } from "@/contexts/policy-context";
@@ -23,6 +21,11 @@ jest.mock("@/contexts/nodes-context", () => ({
   useNodes: jest.fn(() => ({
     clearNodes: jest.fn(),
     revertNodes: jest.fn(),
+    unindentifiedNodes: [
+      {
+        type: "start",
+      },
+    ],
   })),
 }));
 
@@ -30,7 +33,7 @@ jest.mock("@/contexts/policy-context", () => ({
   usePolicy: jest.fn(() => ({
     loadingUpdate: false,
     policy: {
-      decisions: [{}],
+      nodes: [],
       output: true,
     },
     updatePolicy: jest.fn(),
@@ -43,21 +46,8 @@ const usePolicyMock = usePolicy as jest.Mock<
 
 jest.mock("@/pages/home/logics/use-nodes-logic", () => ({
   useNodesLogic: jest.fn(() => ({
-    decisionNodes: [
-      {
-        decision: {
-          variable: "variable",
-          value: 0,
-        },
-        type: "DECISION",
-      },
-    ],
-    endNode: {
-      output: true,
-      type: "END",
-    },
     startNode: {
-      type: "START",
+      type: "start",
     },
   })),
 }));
@@ -83,6 +73,22 @@ describe("Header", () => {
     expect(container.firstChild).toBeDefined();
   });
 
+  it("should render with undefined policy", () => {
+    usePolicyMock.mockReturnValueOnce({
+      policy: undefined,
+    });
+
+    makeSut();
+  });
+
+  it("should render with unindentifiedNodes different from nodes from policy", () => {
+    usePolicyMock.mockReturnValueOnce({
+      policy: [{}],
+    } as any);
+
+    makeSut();
+  });
+
   it("should call updatePolicy when onClick from ButtonMock with Deploy as its children is called", () => {
     const updatePolicyMock = jest.fn();
 
@@ -101,25 +107,5 @@ describe("Header", () => {
     makeSut();
 
     expect(updatePolicyMock).toHaveBeenCalled();
-  });
-
-  it("should call canUpdatePolicy and return true if output from endNode is different from policy output", () => {
-    useNodesLogicMock.mockReturnValueOnce({
-      decisionNodes: [],
-      endNode: {
-        output: false,
-        type: "END",
-      },
-    } as any);
-
-    makeSut();
-
-    expect(ButtonMock).toHaveBeenNthCalledWith(
-      3,
-      expect.objectContaining({
-        disabled: false,
-      }),
-      {},
-    );
   });
 });

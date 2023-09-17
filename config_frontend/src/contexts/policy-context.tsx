@@ -1,16 +1,10 @@
 import { createContext, useContext } from "react";
 
-export type Decision = {
-  criteria: "<" | "<=" | "==" | ">=" | ">";
-  id?: string;
-  value: number;
-  variable: string;
-};
+import { type Node } from "@/contexts/nodes-context";
 
 export type Policy = {
-  decisions: Decision[];
+  nodes: Node[];
   id: string;
-  output: boolean;
 };
 
 type Props = {

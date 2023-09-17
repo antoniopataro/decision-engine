@@ -1,10 +1,10 @@
-import Select from "@/components/select";
+import { Select } from "@/components/select";
 
-import { Decision } from "@/contexts/policy-context";
+import { type Condition } from "@/contexts/nodes-context";
 
 const criteriaOptions: {
-  label: Decision["criteria"];
-  value: Decision["criteria"];
+  label: Condition["criteria"];
+  value: Condition["criteria"];
 }[] = [
   {
     label: "<",
@@ -29,8 +29,8 @@ const criteriaOptions: {
 ];
 
 export const Criteria: React.FC<{
-  criteria: Decision["criteria"];
-  onChange: (criteria: Decision["criteria"]) => void;
+  criteria: Condition["criteria"];
+  onChange: (criteria: Condition["criteria"]) => void;
 }> = ({ criteria, onChange }) => {
   return (
     <div className="flex h-8 divide-x divide-black/25 rounded ring-1 ring-black/25">

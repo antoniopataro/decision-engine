@@ -1,8 +1,7 @@
 import { useNodes } from "@/contexts/nodes-context";
 
 import { Home } from "@/pages/home";
-
-import { DndContext } from "@dnd-kit/core";
+import { DndProvider } from "@/providers/dnd-provider";
 
 import { render } from "@testing-library/react";
 
@@ -10,6 +9,8 @@ jest.mock("@/contexts/nodes-context", () => ({
   useNodes: jest.fn(() => ({
     addNode: jest.fn(),
     nodes: [],
+    replaceNode: jest.fn(),
+    setNodes: jest.fn(),
   })),
 }));
 
@@ -29,12 +30,11 @@ jest.mock("@/pages/home/pieces/policy", () => ({
   Policy: jest.fn(() => <div />),
 }));
 
-jest.mock("@dnd-kit/core", () => ({
-  ...jest.requireActual("@dnd-kit/core"),
-  DndContext: jest.fn(({ children }) => <div>{children}</div>),
+jest.mock("@/providers/dnd-provider", () => ({
+  DndProvider: jest.fn(({ children }) => <div>{children}</div>),
 }));
 
-const DndContextMock = DndContext as jest.MockedFunction<typeof DndContext>;
+const DndProviderMock = DndProvider as jest.MockedFunction<typeof DndProvider>;
 
 const makeSut = () => {
   return render(<Home />);
@@ -42,19 +42,13 @@ const makeSut = () => {
 
 describe("Home", () => {
   afterEach(() => {
-    DndContextMock.mockClear();
+    DndProviderMock.mockClear();
     useNodesMock.mockClear();
   });
 
   it("should render", () => {
-    DndContextMock.mockImplementationOnce(({ children, onDragEnd }) => {
-      onDragEnd?.({
-        collisions: [],
-        delta: {
-          x: 0,
-          y: 1,
-        },
-      } as any);
+    DndProviderMock.mockImplementationOnce(({ children, onDragEnd }) => {
+      onDragEnd?.({} as any, undefined as any);
 
       return <div>{children}</div>;
     });
@@ -64,87 +58,126 @@ describe("Home", () => {
     expect(container.firstChild).toBeDefined();
   });
 
-  it("should call addNode with DECISION type when handleDragEnd is called", () => {
+  it("should call addNode when handleDragEnd is called and draggableId is condition", () => {
     const addNodeMock = jest.fn();
 
     useNodesMock.mockReturnValueOnce({
       addNode: addNodeMock,
-      nodes: [],
     });
 
-    DndContextMock.mockImplementationOnce(({ children, onDragEnd }) => {
-      onDragEnd?.({
-        active: {
-          id: "DECISION",
-        },
-        collisions: [],
-        delta: {
-          x: 0,
-          y: 0,
-        },
-      } as any);
+    DndProviderMock.mockImplementationOnce(({ children, onDragEnd }) => {
+      onDragEnd?.(
+        {
+          destination: {
+            droppableId: "-then",
+          },
+          draggableId: "condition",
+          source: {
+            droppableId: "",
+          },
+        } as any,
+        undefined as any,
+      );
 
       return <div>{children}</div>;
     });
 
     makeSut();
 
-    expect(addNodeMock).toHaveBeenCalledWith({ type: "DECISION" });
+    expect(addNodeMock).toHaveBeenCalledWith(
+      expect.objectContaining({ type: "condition" }),
+    );
   });
 
-  it("should call addNode with END type when handleDragEnd is called", () => {
+  it("should call addNode when handleDragEnd is called and draggableId is condition with different props", () => {
     const addNodeMock = jest.fn();
 
     useNodesMock.mockReturnValueOnce({
       addNode: addNodeMock,
-      nodes: [],
     });
 
-    DndContextMock.mockImplementationOnce(({ children, onDragEnd }) => {
-      onDragEnd?.({
-        active: {
-          id: "END",
-        },
-        collisions: [],
-        delta: {
-          x: 0,
-          y: 0,
-        },
-      } as any);
+    DndProviderMock.mockImplementationOnce(({ children, onDragEnd }) => {
+      onDragEnd?.(
+        {
+          destination: {
+            droppableId: "policy",
+          },
+          draggableId: "condition",
+          source: {
+            droppableId: "",
+          },
+        } as any,
+        undefined as any,
+      );
 
       return <div>{children}</div>;
     });
 
     makeSut();
 
-    expect(addNodeMock).toHaveBeenCalledWith({ type: "END" });
+    expect(addNodeMock).toHaveBeenCalledWith(
+      expect.objectContaining({ type: "condition" }),
+    );
   });
 
-  it("should call addNode with START type when handleDragEnd is called", () => {
-    const addNodeMock = jest.fn();
+  it("should call replaceNode when handleDragEnd is called and droppableId from destination is different from droppableId from source", () => {
+    const replaceNodeMock = jest.fn();
 
     useNodesMock.mockReturnValueOnce({
-      addNode: addNodeMock,
-      nodes: [],
+      replaceNode: replaceNodeMock,
     });
 
-    DndContextMock.mockImplementationOnce(({ children, onDragEnd }) => {
-      onDragEnd?.({
-        active: {
-          id: "START",
-        },
-        collisions: [],
-        delta: {
-          x: 0,
-          y: 0,
-        },
-      } as any);
+    DndProviderMock.mockImplementationOnce(({ children, onDragEnd }) => {
+      onDragEnd?.(
+        {
+          destination: {
+            droppableId: "-then",
+          },
+          draggableId: "",
+          source: {
+            droppableId: "-",
+          },
+        } as any,
+        undefined as any,
+      );
 
       return <div>{children}</div>;
     });
 
     makeSut();
 
-    expect(addNodeMock).toHaveBeenCalledWith({ type: "START" });
+    expect(replaceNodeMock).toHaveBeenCalledWith(
+      expect.objectContaining({ context: "then" }),
+    );
+  });
+
+  it("should call setNodes when handleDragEnd is called and droppableId from destination is equal to droppableId from source", () => {
+    const setNodesMock = jest.fn();
+
+    useNodesMock.mockReturnValueOnce({
+      nodes: [],
+      setNodes: setNodesMock,
+    });
+
+    DndProviderMock.mockImplementationOnce(({ children, onDragEnd }) => {
+      onDragEnd?.(
+        {
+          destination: {
+            droppableId: "",
+          },
+          draggableId: "",
+          source: {
+            droppableId: "",
+          },
+        } as any,
+        undefined as any,
+      );
+
+      return <div>{children}</div>;
+    });
+
+    makeSut();
+
+    expect(setNodesMock).toHaveBeenCalled();
   });
 });

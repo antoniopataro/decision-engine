@@ -1,52 +1,47 @@
 import React, { useMemo } from "react";
 
-import { Icon, IconTypes } from "@/components/icon";
-import { Draggable } from "@/components/draggable";
+import { Icon, type IconTypes } from "@/components/icon";
 
-import { Node } from "@/contexts/nodes-context";
+import { type Node } from "@/contexts/nodes-context";
 
 import { useNodesLogic } from "@/pages/home/logics/use-nodes-logic";
+import { Draggable, Droppable } from "react-beautiful-dnd";
 
 export const AvailableNodes: React.FC = () => {
-  const { decisionNodes, endNode, startNode } = useNodesLogic();
+  const { lastNode, startNode } = useNodesLogic();
 
-  const availableNodeTypes = useMemo(
-    () =>
-      [
-        ...(!endNode && startNode
-          ? [
-              {
-                icon: "Decision",
-                label: "Decision",
-                type: "DECISION",
-              },
-            ]
-          : []),
-        ...(!endNode && decisionNodes.length > 0 && startNode
-          ? [
-              {
-                icon: "End",
-                label: "End",
-                type: "END",
-              },
-            ]
-          : []),
-        ...(!startNode
-          ? [
-              {
-                icon: "Start",
-                label: "Start",
-                type: "START",
-              },
-            ]
-          : []),
-      ] as {
-        icon?: IconTypes;
-        label: string;
-        type: Node["type"];
-      }[],
-    [decisionNodes, endNode, startNode],
-  );
+  const availableNodes: {
+    icon?: IconTypes;
+    label: string;
+    type: Node["type"];
+  }[] = useMemo(() => {
+    if (lastNode && lastNode.type === "output") {
+      return [];
+    }
+
+    if (!startNode) {
+      return [
+        {
+          icon: "Start",
+          label: "Start",
+          type: "start",
+        },
+      ];
+    }
+
+    return [
+      {
+        icon: "Condition",
+        label: "Condition",
+        type: "condition",
+      },
+      {
+        icon: "Output",
+        label: "Output",
+        type: "output",
+      },
+    ];
+  }, [lastNode, startNode]);
 
   return (
     <div className="flex h-full w-full flex-col gap-16 bg-white px-8 py-16">
@@ -57,29 +52,49 @@ export const AvailableNodes: React.FC = () => {
           current state.
         </p>
       </div>
-      <ul className="flex flex-col items-center gap-4">
-        {availableNodeTypes.length !== 0 ? (
-          availableNodeTypes.map((availableNodeType) => (
-            <Draggable key={availableNodeType.type} id={availableNodeType.type}>
-              <li className="boder-black/25 flex w-fit items-center justify-center gap-3 rounded-lg border border-dashed border-black/25 bg-white px-4 py-3 text-sm text-black/75">
-                {availableNodeType.icon && (
-                  <Icon color="#808080" use={availableNodeType.icon} />
-                )}
-                {availableNodeType.label}
-              </li>
-            </Draggable>
-          ))
-        ) : (
-          <p className="text-sm text-black/50">
-            If you see no nodes, maybe your diagram is complete. Try removing
-            the "end" node to add more "decision" nodes.
-            <br />
-            <br />
-            If you want to change the course of logic, toggle the end node by
-            clicking on it.
-          </p>
+      <Droppable droppableId="availableNodes">
+        {(provided) => (
+          <ul
+            ref={provided.innerRef}
+            className="flex flex-col items-center gap-4"
+          >
+            {availableNodes.length !== 0 ? (
+              availableNodes.map((availableNode, index) => (
+                <Draggable
+                  draggableId={availableNode.type}
+                  index={index}
+                  key={availableNode.type}
+                >
+                  {(provided) => (
+                    <div
+                      {...provided.draggableProps}
+                      {...provided.dragHandleProps}
+                      ref={provided.innerRef}
+                    >
+                      <li className="boder-black/25 flex w-fit items-center justify-center gap-3 rounded-lg border border-dashed border-black/25 bg-white px-4 py-3 text-sm text-black/75">
+                        {availableNode.icon && (
+                          <Icon color="#808080" use={availableNode.icon} />
+                        )}
+                        {availableNode.label}
+                      </li>
+                    </div>
+                  )}
+                </Draggable>
+              ))
+            ) : (
+              <p className="text-sm text-black/50">
+                If you see no nodes, maybe your diagram is complete. Try
+                removing the "end" node to add more "decision" nodes.
+                <br />
+                <br />
+                If you want to change the course of logic, toggle the end node
+                by clicking on it.
+              </p>
+            )}
+            {provided.placeholder}
+          </ul>
         )}
-      </ul>
+      </Droppable>
     </div>
   );
 };

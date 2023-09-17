@@ -4,6 +4,7 @@ import {
   ChevronDown,
   Diamond,
   Flag,
+  GripVertical,
   Loader,
   MinusCircle,
   Play,
@@ -13,9 +14,10 @@ import {
 
 const Icons = {
   ChevronDown: <ChevronDown />,
-  Decision: <Diamond />,
-  End: <Flag />,
+  Condition: <Diamond />,
+  Grip: <GripVertical />,
   Loading: <Loader />,
+  Output: <Flag />,
   Remove: <MinusCircle />,
   Start: <Play />,
   Undo: <Undo />,

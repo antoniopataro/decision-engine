@@ -1,30 +1,51 @@
-import { createContext, useContext } from "react";
+import { Dispatch, SetStateAction, createContext, useContext } from "react";
 
-import type { Decision } from "@/contexts/policy-context";
+export type Condition = {
+  criteria: "<" | "<=" | "==" | ">=" | ">";
+  value: number;
+  variable: string;
+};
 
 export type Node = {
-  id: string;
+  id?: string;
 } & (
   | {
+      condition: Condition;
+      otherwise?: Node[];
+      parent_ids?: string[];
+      then?: Node[];
+      type: "condition";
+    }
+  | {
       output: boolean;
-      type: "END";
+      parent_ids?: string[];
+      type: "output";
     }
   | {
-      type: "START";
-    }
-  | {
-      decision: Decision;
-      type: "DECISION";
+      type: "start";
     }
 );
 
 type Props = {
-  addNode: (node: Partial<Node>) => void;
+  addNode: (props: {
+    context?: "otherwise" | "then";
+    index?: number;
+    target_id?: string;
+    type: Node["type"];
+  }) => Node | void;
   clearNodes: () => void;
   nodes: Node[];
-  removeNode: (node: Partial<Node>) => void;
+  removeNode: (props: Partial<Node>) => void;
+  replaceNode: (props: {
+    context: "otherwise" | "then";
+    index?: number;
+    source_id: string;
+    target_id: string;
+  }) => void;
   revertNodes: () => void;
-  updateNode: (node: Partial<Node>) => void;
+  setNodes: Dispatch<SetStateAction<Node[]>>;
+  unindentifiedNodes: Omit<Node, "id">[];
+  updateNode: (props: Partial<Node>) => void;
 };
 
 export const NodesContext = createContext({} as Props);

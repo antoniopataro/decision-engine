@@ -1,8 +1,8 @@
-import { Decision } from "@/contexts/policy-context";
+import { Condition } from "@/contexts/nodes-context";
 
 export const Variable: React.FC<{
-  onChange: (variable: Decision["variable"]) => void;
-  variable: Decision["variable"];
+  onChange: (variable: Condition["variable"]) => void;
+  variable: Condition["variable"];
 }> = ({ onChange, variable }) => {
   return (
     <input

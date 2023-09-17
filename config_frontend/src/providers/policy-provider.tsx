@@ -1,10 +1,11 @@
-import React, { PropsWithChildren, useEffect, useState } from "react";
+import React, { type PropsWithChildren, useEffect, useState } from "react";
 
 import { DEFAULT_POLICY_ID } from "@/config/envs";
 
 import { Policy, PolicyContext } from "@/contexts/policy-context";
 
 import { api } from "@/services/api";
+import toast from "react-hot-toast";
 
 export const PolicyProvider: React.FC<PropsWithChildren> = ({ children }) => {
   const [loading, setLoading] = useState(true);
@@ -38,7 +39,9 @@ export const PolicyProvider: React.FC<PropsWithChildren> = ({ children }) => {
 
     try {
       const res = await api
-        .patch(`/policy/${data.id ?? DEFAULT_POLICY_ID}/update`, data)
+        .patch(`/policy/${data.id ?? DEFAULT_POLICY_ID}/update`, {
+          nodes: data.nodes
+        })
         .finally(() => {
           setLoadingUpdate(false);
         });
@@ -46,7 +49,13 @@ export const PolicyProvider: React.FC<PropsWithChildren> = ({ children }) => {
       setPolicy(res.data);
 
       return res.data;
-    } catch (err) {
+    } catch (err: any) {
+      const message = err?.response?.data?.error
+
+      if (message  && typeof message === 'string') {
+        toast.error(message)
+      }
+
       console.log(err);
     }
   };

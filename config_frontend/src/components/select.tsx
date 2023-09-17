@@ -47,7 +47,7 @@ export const Select: React.FC<Props> = ({ options, select, setSelect }) => {
     <div
       aria-expanded={isOpen}
       ref={dropdownRef}
-      className="relative whitespace-nowrap"
+      className="relative z-10 whitespace-nowrap"
     >
       <div
         onClick={() => setIsOpen(!isOpen)}

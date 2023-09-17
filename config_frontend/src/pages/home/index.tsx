@@ -6,42 +6,62 @@ import { AvailableNodes } from "@/pages/home/pieces/available-nodes";
 import { Header } from "@/pages/home/pieces/header";
 import { Policy } from "@/pages/home/pieces/policy";
 
-import { DndContext, DragEndEvent } from "@dnd-kit/core";
+import { DndProvider } from "@/providers/dnd-provider";
+
+import { type DropResult } from "react-beautiful-dnd";
 
 export const Home: React.FC = () => {
-  const { addNode } = useNodes();
+  const { addNode, nodes, replaceNode, setNodes } = useNodes();
 
   const handleDragEnd = useCallback(
-    (e: DragEndEvent) => {
-      if (
-        e.collisions?.[0]?.id !== "POLICY" &&
-        (e.delta.x !== 0 || e.delta.y !== 0)
-      ) {
+    ({ destination, draggableId, source }: DropResult) => {
+      if (!destination || destination.droppableId === "availableNodes") {
         return;
       }
 
-      if (e.active.id === "DECISION") {
-        addNode({ type: "DECISION" });
+      const context = destination.droppableId.split("-").pop() as
+        | "otherwise"
+        | "then";
+
+      if (["condition", "output", "start"].includes(draggableId)) {
+        addNode({
+          ...(["otherwise", "then"].includes(context) && { context }),
+          index: destination.droppableId === 'policy' ? destination.index + 1 : destination.index,
+          target_id: destination.droppableId,
+          type: draggableId as "condition" | "output" | "start",
+        });
+
         return;
       }
 
-      if (e.active.id === "END") {
-        addNode({ type: "END" });
+      if (destination.droppableId !== source.droppableId) {
+        const context = destination.droppableId.split("-").pop() as
+          | "otherwise"
+          | "then";
+
+        replaceNode({
+          context,
+          index: destination.index,
+          source_id: draggableId,
+          target_id: destination.droppableId,
+        });
+
         return;
       }
 
-      if (e.active.id === "START") {
-        addNode({ type: "START" });
-        return;
-      }
+      const items = Array.from(nodes);
+      const [reordered] = items.splice(source.index + 1, 1);
+      items.splice(destination.index + 1, 0, reordered);
+
+      setNodes(() => items);
     },
-    [addNode],
+    [nodes],
   );
 
   return (
     <div className="flex h-screen w-full flex-col divide-y divide-dashed divide-black/25 overflow-hidden">
       <Header />
-      <DndContext onDragEnd={handleDragEnd}>
+      <DndProvider onDragEnd={handleDragEnd}>
         <main className="flex h-full divide-x divide-dashed divide-black/25">
           <div className="h-full w-3/4">
             <Policy />
@@ -50,7 +70,7 @@ export const Home: React.FC = () => {
             <AvailableNodes />
           </div>
         </main>
-      </DndContext>
+      </DndProvider>
     </div>
   );
 };

@@ -4,67 +4,41 @@ import { Button } from "@/components/button";
 
 import { DEFAULT_POLICY_ID } from "@/config/envs";
 
-import { useNodes } from "@/contexts/nodes-context";
-import { Decision, usePolicy } from "@/contexts/policy-context";
+import { type Node, useNodes } from "@/contexts/nodes-context";
+import { usePolicy } from "@/contexts/policy-context";
 
 import { useNodesLogic } from "@/pages/home/logics/use-nodes-logic";
 
 export const Header: React.FC = () => {
-  const { clearNodes, revertNodes } = useNodes();
+  const { clearNodes, revertNodes, unindentifiedNodes } = useNodes();
   const { loadingUpdate, policy, updatePolicy } = usePolicy();
 
-  const { decisionNodes, endNode, startNode } = useNodesLogic();
-
-  const areDecisionsDifferent = useMemo(
-    () =>
-      !policy
-        ? false
-        : JSON.stringify(
-            decisionNodes
-              .map((decisionNode) =>
-                decisionNode.type === "DECISION"
-                  ? decisionNode.decision
-                  : undefined,
-              )
-              .filter((decision) => decision !== undefined) as Decision[],
-          ) !== JSON.stringify(policy.decisions),
-    [decisionNodes, policy],
-  );
+  const { startNode } = useNodesLogic();
 
   const canUpdatePolicy = useMemo(() => {
-    if (!endNode || !policy) {
+    if (!policy) {
       return false;
     }
 
-    if (endNode.type === "END" && endNode.output !== policy.output) {
+    if (
+      JSON.stringify(
+        unindentifiedNodes.filter((node) => node.type !== "start"),
+      ) !== JSON.stringify(policy.nodes)
+    ) {
       return true;
     }
 
-    return (
-      areDecisionsDifferent &&
-      decisionNodes.every((decisionNode) => {
-        if (decisionNode.type !== "DECISION") {
-          return false;
-        }
-
-        const { variable, value } = decisionNode.decision;
-
-        return !!variable && (!!value || value === 0);
-      })
-    );
-  }, [decisionNodes, endNode, policy]);
+    return false;
+  }, [policy, unindentifiedNodes]);
 
   const handleUpdatePolicy = useCallback(async () => {
     await updatePolicy({
-      decisions: decisionNodes
-        .map((decisionNode) =>
-          decisionNode.type === "DECISION" ? decisionNode.decision : undefined,
-        )
-        .filter((decision) => decision !== undefined) as Decision[],
+      nodes: unindentifiedNodes.filter(
+        (node) => node.type !== "start",
+      ) as Node[],
       id: DEFAULT_POLICY_ID,
-      output: endNode && endNode.type === "END" ? endNode.output : true,
     });
-  }, [decisionNodes, DEFAULT_POLICY_ID]);
+  }, [DEFAULT_POLICY_ID, unindentifiedNodes]);
 
   return (
     <header className="flex items-center justify-between px-16 py-8">
@@ -84,7 +58,7 @@ export const Header: React.FC = () => {
           Clear
         </Button>
         <Button
-          disabled={!areDecisionsDifferent}
+          disabled={!canUpdatePolicy}
           icon={{ color: "#808080", use: "Undo" }}
           onClick={revertNodes}
           variant="white"

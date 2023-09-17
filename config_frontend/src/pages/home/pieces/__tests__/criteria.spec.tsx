@@ -1,8 +1,12 @@
 import React from "react";
 
+import { Criteria } from "@/pages/home/pieces/criteria";
+
 import { render } from "@testing-library/react";
 
-import { Criteria } from "@/pages/home/pieces/criteria";
+jest.mock("@/components/select", () => ({
+  Select: jest.fn(() => <div />),
+}));
 
 const defaultProps: React.ComponentProps<typeof Criteria> = {
   criteria: "<",
