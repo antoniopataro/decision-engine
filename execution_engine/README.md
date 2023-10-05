@@ -1,7 +1,6 @@
-#### ExecutionEngine
+#### About
+I also used Python, with settings similar to the `config_backend`.
 
-Utilizei, também, Python, com configurações similares ao `config_backend`.
+#### Endpoints:
 
-Endpoints:
-
-- POST: `/api/execute/<id>` <sub>Executa uma policy com base em um 'id' diante dos dados passados pelo body, retornando um { "decision": boolean }.</sub>
+- POST: `/api/execute/<id>` <sub>Executes a policy based on an 'id' given the data passed by the body, returning a { "decision": boolean }.</sub>
