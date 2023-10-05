@@ -1,10 +1,10 @@
-#### ConfigFrontend
+#### About
+As there was no specification regarding the technologies to be used in `config_frontend`, I felt more comfortable using Typescript and React.
 
-Como não havia especificação quanto às tecnologias a serem usadas no `config_frontend`, me senti mais confortável utilizando Typescript com `react`.
+The application makes a request to the `config_backend` to search for the _Policy_ with the 'default' id, saving it in a state. At this moment, another state is created, which manages the 'nodes' seen by the user on the main screen "/". This decouples the requested 'nodes' from the user's changes, in addition to allowing the handling of other types of 'nodes', such as 'output' and 'start', and a deep-comparison in a simplified way , using `JSON.stringify()`, to check if there are changes that can be deployed. Both the _Policy_ and the 'nodes' are exposed in a context, providing easy access to this information at any level of the application under its providers.
 
-A aplicação realiza uma requisição ao `config_backend` para buscar a _Policy_ com o id 'default', salvando-a em um estado. Nesse momento, um outro estado é criado, o qual gerencia os 'nodes' vistos pelo usuário na tela principal "/". Isso serve para desacoplar os 'nodes' que vieram da request das alterações do usuário, além de permitir uma tratativa de outros tipos de 'nodes', como o de 'output' e de 'start', e uma deep-comparision de forma simplificada, utilizando `JSON.stringify()`, para verificar se há alterações passíveis de deploy. Tanto a _Policy_ quanto os 'nodes' são expostos via a `ContextAPI` do `react`, favorecendo um fácil acesso a essas informações em qualquer nível da aplicação sob os seus providers.
+I chose `tailwindcss` as the styling library due to its practicality and added `clsx` and `tailwind-merge` to have flexibility in components when necessary.
 
-Escolhi o `tailwindcss` como biblioteca de estilização devido à sua praticidade e somei isso ao `clsx` e ao `tailwind-merge` para ter flexibilidade nos componentes quando necessário.
-Ainda quanto à UI, criei componentes-base na pasta `components/`, componentes extras por feature nas pastas `pieces/` e utilizei o `react-beautiful-dnd` para fazer a feature de drag-and-drop de forma simples.
+Still regarding the UI, I created base components in the `components/` folder, extra components per feature in the `pieces/` folders and used `react-beautiful-dnd` to make the drag-and-drop feature in a simple way.
 
-OBS: Às vezes, o comportanento do componente de 'select' para 'criteria' nos 'decision-nodes' é inesperado devido ao z-index. Pode-se usar ['portals'](https://legacy.reactjs.org/docs/portals.html) para solucionar isso.
+OBS: Sometimes, the behavior of the component from 'select' to 'criteria' in 'decision-nodes' is unexpected due to z-index. You can use ['portals'](https://legacy.reactjs.org/docs/portals.html) to solve this.
