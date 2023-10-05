@@ -1,45 +1,67 @@
-<sub>OBS: Não entendi muito bem se o(s) README(s) também deveria(am) estar em inglês. Por isso, deixei toda essa parte em português mesmo.</sub>
+<sub>Credits to [David Reis](https://www.linkedin.com/in/davidreisbr/) for the awesome challenge. Had a lot of fun doing it.</sub>
 
-#### Pressupostos
+#### Assumptions
 
-1. Se a árvore de decisão não coincidir com nenhum nó de saída, a execução retorna um erro.
+1. If the decision tree doesn't match any output node, the execution should return an error.
 
-#### Instruções
+#### Instructions
 
-Para rodar o projeto de forma rápida, siga os passos abaixo:
+To set it up quickly, follow allong:
 
-1. Certifique-se de ter o [Node](https://nodejs.org/en) (v16.20.0) e o [Python](https://www.python.org/downloads/) (v3.10.12) instalados globalmente no seu computador;
-2. Execute, em uma linha de comando, `git clone git@github.com:antoniopataro/decision-engine.git` seguido de `cd decision-engine`;
-3. Abra três terminais. Certifique-se de que eles estão no path do projeto. Rode:
-   1. `sh t_config_backend.sh` no primeiro terminal (config_backend);
-   1. `sh t_config_frontend.sh` no segundo terminal (config_frontend);
-   1. `sh t_execution_engine.sh` no terceiro terminal (execution_engine);
+1. Make sure you have [Node](https://nodejs.org/en) (v16.20.0) and [Python](https://www.python.org/downloads/) (v3.10.12) installed globally on your machine;
+2. Run, in a command line, `git clone git@github.com:antoniopataro/decision-engine.git` followed by `cd decision-engine`;
+3. Open three terminals. Make sure they are in the project's path. Run:
+   1. `sh t_config_backend.sh` on the first one (config_backend);
+   1. `sh t_config_frontend.sh` on the second one (config_frontend);
+   1. `sh t_execution_engine.sh` on the third one (execution_engine);
 
 <details>
-  <summary>Algo deu errado? Tente a instalação manual.</summary>
+<summary>Something went wrong? Try installing it manually.</summary>
 
-1. Certifique-se de ter o [Node](https://nodejs.org/en) (v16.20.0) e o [Python](https://www.python.org/downloads/) (v3.10.12) instalados globalmente no seu computador. Dependendo da sua instalação, pode haver o path `python3` ao invés de `python`. Caso seja o caso, troque, em todas as ocorrências das instruções abaixo, `python` por `python3`;
-2. Execute em uma linha de comando `git clone git@github.com:antoniopataro/decision-engine.git` seguido de `cd decision-engine`;
-3. Execute três instâncias de terminais, um para cada peça chave do projeto;
-4. No primeiro, execute `cd config_backend` para acessar o conteúdo do ConfigBackend e rode:
-   1. `python -m pip install -r requirements.txt` para instalar as dependências com o `pip`;
-   2. `python manage.py makemigrations` para gerar as migrations do banco de dados;
-   3. `python manage.py migrate` para executar as migrations;
-   4. `python manage.py seed` para popular o banco com um seed pré-configurado;
-   5. `python manage.py runserver` para iniciar o servidor da API na porta 7001.
-5. No segundo, execute `cd config_frontend` para acessar o conteúdo do ConfigFrontend e rode: 2. `npm install` para instalar as dependências necessárias; 3. `npm run build` para compilar o projeto em um build estável; 4. `npm run preview` para instanciar o servidor de visualização da build utilizado pelo Vite, disponível na porta 7002.
-6. No terceiro, execute `cd execution_engine` para acessar o conteúdo do ExecutionEngine e rode:
-   1. `python -m pip install -r requirements.txt` para instalar as dependências com o `pip`;
-   2. `python manage.py runserver` para iniciar o servidor da API na porta 7003,
-
-Para utilizar as features do projeto, comece pelo `config_frontend`, pelo navegador, em localhost:7002. Alterações a _Policy_ default e faça deploy. Teste o deploy com um POST (via cURL ou algum client http) no endpoint `/api/execute` do `execution_engine`, com um body conforme a descrição do desafio.
-
+1. Make sure you have [Node](https://nodejs.org/en) (v16.20.0) and [Python](https://www.python.org/downloads/) (v3.10.12) installed globally on your machine; Depending on your installation, you might have the path `python3` instead of `python`. If that's the case, replace, in all occurrences below, `python` with `python3`;
+2. Run, in a command line, `git clone git@github.com:antoniopataro/decision-engine.git` followed by `cd decision-engine`;
+3. Open three terminals. Make sure they are in the project's path. Run:
+4. On the first one, `cd config_backend` to access the ConfigBackend, then:
+   1. `python -m pip install -r requirements.txt` to install its dependencies with `pip`;
+   2. `python manage.py makemigrations` to generate all database migrations;
+   3. `python manage.py migrate` to run all generated database migrations;
+   4. `python manage.py seed` to populate the database with a predefined seed;
+   5. `python manage.py runserver` to run it locally on port 7001.
+5. On the second one, `cd config_frontend` to access the ConfigFrontend, then:
+   1. `npm install` to install its dependencies with `npm`;
+   2. `npm run build` to compile the project on a stable build; 
+   3. `npm run preview` to start a local preview server used by Vite on port 7002.
+6. On the second one, `cd execution_engine` to access the ExecutionEngine, then:
+   1. `python -m pip install -r requirements.txt` to install its dependencies with `pip`;
+   2. `python manage.py runserver` to run it locally on port 7003,
 </details>
 
-#### Testes
+To use the project's features, start with the `config_frontend`, in the browser, at localhost:7002. Make changes to the default _Policy_ and deploy. Test the deployment with a POST (via cURL or some http client) on the `/api/execute` endpoint of the `execution_engine`, with a body like:
 
-Todas as aplicações tem testes unitários, para rodar:
+```json
+{
+  "age": 23,
+  "income": 3000
+}
+```
 
+#### Tech
+- axios;
+- django;
+- djangorestframework;
+- lodash;
+- lucide-react (icons);
+- python;
+- react;
+- react-beautiful-dnd;
+- react-hot-toast;
+- sqlite (flat-file db);
+- tailwindcss with clsx and tailwind-merge;
+- uuid.
+
+#### Tests
+
+All applications have unit tests, to run them:
 - `config_backend`: `python manage.py test`;
 - `config_frontend`: `npm run test -- --coverage --watchAll`;
 - `execution_engine`: `python manage.py test`;
