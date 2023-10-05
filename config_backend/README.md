@@ -1,16 +1,12 @@
-#### ConfigBackend
+#### About
+I used Python, as recommended in the challenge, with Django + Django REST Framework to facilitate the creation of a simple API. It was my first contact with Python for APIs.
 
-Utilizei Python, como recomendado no desafio, com Django + Django REST Framework pra facilitar a criação de uma API simples. Foi o meu primeiro contato com Python para APIs.
+I created the _Policy_ model with the 'id' and 'nodes' fields. As the challenge only cares about one _Policy_, a default id 'default' is used by `config_frontend`.
 
-Criei o modelo _Policy_ com os campos 'id' e 'nodes'. Como o desafio se importa com apenas uma _Policy_, é utilizado um id default, 'default' pelo `config_frontend`.
+This model makes up the only table in the database, `policy_db`, under which view actions can take effect.
 
-Esse modelo compõe a única tabela do banco de dados, o `policy_db`, sob o qual as ações das views podem fazer efeito.
+The `config_frontend` must be able to perform READ to display the _Policy_ and UPDATE to change the _Policy_ (its 'nodes').
 
-O `config_frontend` deve ser capaz de realizar READ para exibição da _Policy_ e UPDATE para alterar a _Policy_ (seus 'nodes').
-
-O `execution_engine` deve ser capaz de realizar READ para ler o estado atual da _Policy_ (seus 'nodes') para calcular uma 'decision'.
-
-Endpoints:
-
-- GET: `/api/policy/<id>` <sub>Retorna uma policy com base no id.</sub>
-- PATCH: `/api/policy/<id>/update` <sub>Altera uma policy com base no id e nos dados passados pelo body.</sub>
+#### Endpoints:
+- GET: `/api/policy/<id>` <sub>Returns a policy based on id.</sub>
+- PATCH: `/api/policy/<id>/update` <sub>Changes a policy based on the id and data passed by the body.</sub>
